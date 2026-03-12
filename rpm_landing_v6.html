@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RPM — Venda e Pós-Venda para Oficinas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&family=Barlow:wght@400;500;600&family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;1,700&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
+:root {
+  --ora:      #E85C00;
+  --ora2:     #FF7120;
+  --ora-glow: rgba(232,92,0,0.18);
+  --blk:      #0a0a0a;
+  --blk2:     #111111;
+  --blk3:     #1a1a1a;
+  --gray:     #888888;
+  --wht:      #ffffff;
+  --cream:    #F5F2EE;
+  --cream2:   #ECEAE6;
+  --txt:      #111111;
+  --txt2:     #444444;
+  --txt3:     #888888;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--blk);color:var(--wht);font-family:'Barlow',sans-serif;font-size:17px;line-height:1.65;overflow-x:hidden}
+
+/* ─────────────────────────────────────────
+   ANIMATIONS
+───────────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(36px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,92,0,.45)}50%{box-shadow:0 0 0 18px rgba(232,92,0,0)}}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes barIn{from{width:0}to{width:var(--w)}}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ─────────────────────────────────────────
+   SHARED LAYOUT
+───────────────────────────────────────── */
+.container{max-width:1100px;margin:0 auto}
+.sec{padding:96px 24px}
+
+/* uniform headline system */
+.sec-tag{text-align:center;display:block;
+  display:block;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:5px;text-transform:uppercase;
+  color:var(--ora);margin-bottom:14px;
+}
+.sec-h{text-align:center;
+  font-family:'Teko',sans-serif;
+  font-size:clamp(38px,6vw,72px);font-weight:700;font-style:italic;
+  line-height:.95;margin-bottom:22px;
+}
+.sec-h .o{color:var(--ora)}
+.sec-sub{text-align:center;font-size:17px;line-height:1.7;max-width:640px;margin:0 auto 56px;text-align:center}
+
+/* dark section variants */
+.sec-dark{background:var(--blk2)}
+.sec-dark .sec-h{text-align:center;color:var(--wht)}
+.sec-dark .sec-sub{color:#aaa}
+
+/* light section variants */
+.sec-light{background:var(--cream)}
+.sec-light .sec-tag{text-align:center;display:block;color:var(--ora)}
+.sec-light .sec-h{text-align:center;color:var(--txt)}
+.sec-light .sec-sub{color:var(--txt2)}
+
+.sec-light2{background:var(--cream2)}
+.sec-light2 .sec-tag{text-align:center;display:block;color:var(--ora)}
+.sec-light2 .sec-h{text-align:center;color:var(--txt)}
+.sec-light2 .sec-sub{color:var(--txt2)}
+
+/* accent top bar */
+.accent-top::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--ora),var(--ora2),transparent);
+}
+.sec-light,.sec-light2{position:relative}
+
+/* ─────────────────────────────────────────
+   NAV
+───────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  padding:14px 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(10,10,10,.95);backdrop-filter:blur(14px);
+  border-bottom:1px solid #1a1a1a;
+}
+.nav-cta{
+  background:var(--ora);color:#fff;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:13px;letter-spacing:2px;text-transform:uppercase;
+  padding:10px 26px;text-decoration:none;
+  transition:background .2s,transform .2s;
+}
+.nav-cta:hover{background:var(--ora2);transform:translateY(-1px)}
+
+/* ─────────────────────────────────────────
+   LOGO SVG  (matches uploaded brand)
+───────────────────────────────────────── */
+.rpm-logo svg{display:block}
+
+/* ─────────────────────────────────────────
+   HERO
+───────────────────────────────────────── */
+#hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:140px 24px 80px;
+  background:var(--blk);position:relative;overflow:hidden;
+}
+#hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:url('https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f?w=1800&q=50&fit=crop');
+  background-size:cover;background-position:center;
+  opacity:.06;
+}
+#hero::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:
+    radial-gradient(ellipse 65% 55% at 50% 0%,rgba(232,92,0,.12) 0%,transparent 70%),
+    repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,.016) 40px),
+    repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,.016) 40px);
+}
+#hero > *{position:relative;z-index:2}
+
+.hero-eyebrow{text-align:center;
+  font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;
+  letter-spacing:5px;text-transform:uppercase;color:var(--ora);
+  margin-bottom:20px;animation:fadeIn .8s ease both;
+}
+.hero-h{text-align:center;
+  font-family:'Teko',sans-serif;
+  font-weight:700;font-style:italic;
+  line-height:.95;color:var(--wht);max-width:900px;
+  animation:fadeUp .9s ease .2s both;
+  display:flex;flex-direction:column;gap:4px;
+}
+/* "Marketing atrai cliente." — gray, smaller */
+.hero-h-pre{
+  font-size:clamp(22px,5vw,48px);
+  color:#666;
+  line-height:1;
+  font-style:italic;
+}
+/* "Pós-venda faz ele sempre voltar." — white, large, dominant */
+.hero-h-main{
+  font-size:clamp(42px,9vw,104px);
+  color:#ffffff;
+  line-height:.92;
+}
+.hero-h .o{color:var(--ora)}
+.hero-h .out{-webkit-text-stroke:2px #fff;color:transparent}
+
+.hero-sub{
+  font-size:clamp(15px,2vw,18px);color:#999;max-width:540px;
+  margin:24px auto 0;animation:fadeUp .9s ease .4s both;
+  line-height:1.65;
+}
+.hero-sub strong{color:var(--wht);font-weight:600}
+
+.hero-btns{
+  display:flex;gap:14px;margin-top:44px;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp .9s ease .6s both;
+}
+
+.btn-primary{
+  background:var(--ora);color:#fff;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:16px;letter-spacing:2px;text-transform:uppercase;
+  padding:18px 48px;text-decoration:none;display:inline-block;
+  transition:all .2s;animation:pulse 2.5s infinite 1.5s;
+}
+.btn-primary:hover{background:var(--ora2);transform:translateY(-2px)}
+
+.btn-ghost{
+  background:transparent;color:#ccc;
+  font-family:'Barlow Condensed',sans-serif;font-weight:600;
+  font-size:15px;letter-spacing:2px;text-transform:uppercase;
+  padding:18px 30px;border:1px solid #2e2e2e;
+  text-decoration:none;display:inline-block;transition:all .2s;
+}
+.btn-ghost:hover{border-color:var(--ora);color:#fff}
+
+/* hero stats */
+.hero-stats{
+  display:flex;gap:52px;margin-top:72px;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp .9s ease .8s both;
+}
+.hstat{}
+.hstat .n{
+  font-family:'Teko',sans-serif;font-size:44px;font-style:italic;
+  color:var(--wht);line-height:1;
+}
+.hstat .n span{color:var(--ora)}
+.hstat .l{
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gray);margin-top:4px;
+}
+.hdiv{width:1px;height:52px;background:#222;align-self:center}
+
+/* ─────────────────────────────────────────
+   TICKER
+───────────────────────────────────────── */
+.ticker-wrap{background:var(--ora);padding:11px 0;overflow:hidden;white-space:nowrap}
+.ticker-track{display:inline-flex;animation:ticker 24s linear infinite}
+.ticker-item{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  color:#fff;padding:0 38px;
+}
+.ticker-dot{color:rgba(255,255,255,.3);padding:0 4px}
+
+/* ─────────────────────────────────────────
+   SEC 2 — PROBLEMA  (dark, photo + text)
+───────────────────────────────────────── */
+.two-col{
+  display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;
+}
+@media(max-width:820px){.two-col{grid-template-columns:1fr;gap:40px}}
+
+.photo-frame{position:relative}
+.photo-frame img{
+  width:100%;height:460px;object-fit:cover;display:block;
+  filter:grayscale(20%) contrast(1.05);
+}
+.photo-frame::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(232,92,0,.18) 0%,transparent 60%);
+  pointer-events:none;
+}
+.photo-badge{
+  position:absolute;bottom:24px;left:24px;
+  background:var(--ora);padding:14px 20px;
+}
+.photo-badge .pb-n{
+  font-family:'Teko',sans-serif;font-size:40px;font-style:italic;
+  color:#fff;line-height:1;
+}
+.photo-badge .pb-l{
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;
+  letter-spacing:2px;color:rgba(255,255,255,.75);text-transform:uppercase;
+}
+
+/* stat pills */
+.stat-pills{display:flex;flex-direction:column;gap:2px;margin-top:48px}
+.stat-pill{justify-content:center;text-align:center;flex-direction:column;align-items:center;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--blk3);padding:18px 22px;gap:16px;
+  border-left:3px solid transparent;transition:border-color .25s;
+}
+.stat-pill:hover{border-color:var(--ora)}
+.stat-pill-label{font-size:13px;color:#888;text-align:center}
+.stat-pill-val{
+  font-family:'Teko',sans-serif;font-size:28px;font-style:italic;
+  color:var(--wht);white-space:nowrap;
+}
+.stat-pill-val span{color:var(--ora)}
+
+/* ─────────────────────────────────────────
+   SEC 3 — SOLUÇÃO  (light, cards)
+───────────────────────────────────────── */
+.cards-3{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+  gap:3px;margin-top:0;
+}
+.card-light{
+  background:var(--wht);padding:40px 34px;
+  border-bottom:3px solid transparent;
+  transition:border-color .3s,transform .3s;
+}
+.card-light:hover{border-bottom-color:var(--ora);transform:translateY(-4px)}
+.card-big-n{
+  font-family:'Teko',sans-serif;font-size:58px;font-style:italic;
+  color:var(--ora);line-height:1;margin-bottom:6px;
+}
+.card-light h3{
+  font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;
+  color:var(--txt);margin-bottom:10px;
+}
+.card-light p{font-size:14px;color:var(--txt3);line-height:1.6}
+
+/* compare */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:48px}
+@media(max-width:700px){.compare{grid-template-columns:1fr}}
+.cmp{padding:44px 38px}
+.cmp.before{background:var(--wht);border-top:4px solid #ddd}
+.cmp.after{background:var(--txt);border-top:4px solid var(--ora)}
+.cmp-tag{
+  display:block;font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;
+  margin-bottom:14px;
+}
+.cmp.before .cmp-tag{color:#bbb}
+.cmp.after .cmp-tag{color:var(--ora)}
+.cmp h3{
+  font-family:'Teko',sans-serif;font-size:28px;font-style:italic;margin-bottom:22px;
+}
+.cmp.before h3{color:#bbb}
+.cmp.after h3{color:var(--ora)}
+.cmp-list{list-style:none;display:flex;flex-direction:column;gap:11px}
+.cmp-list li{font-size:14px;padding-left:22px;position:relative;line-height:1.5}
+.cmp-list li::before{position:absolute;left:0;font-size:13px}
+.cmp.before .cmp-list li{color:#aaa}
+.cmp.before .cmp-list li::before{content:'✗';color:#bbb}
+.cmp.after .cmp-list li{color:#bbb}
+.cmp.after .cmp-list li::before{content:'✓';color:var(--ora)}
+
+/* ─────────────────────────────────────────
+   SEC 4 — BENEFÍCIOS  (dark, icon list + photo)
+───────────────────────────────────────── */
+.bene-layout{
+  display:grid;grid-template-columns:1fr;gap:0;
+  margin-top:56px;
+}
+@media(max-width:820px){.bene-layout{grid-template-columns:1fr;gap:40px}}
+
+.bene-list{display:flex;flex-direction:column;gap:0}
+.bene-item{
+  display:flex;gap:20px;align-items:flex-start;
+  padding:28px 0;border-bottom:1px solid #1c1c1c;
+}
+.bene-item:first-child{padding-top:0}
+.bene-item:last-child{border-bottom:none}
+
+/* SVG icon box */
+.bene-icon{
+  width:48px;height:48px;flex-shrink:0;
+  background:var(--blk3);border:1px solid #252525;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .3s,border-color .3s;
+}
+.bene-item:hover .bene-icon{background:rgba(232,92,0,.12);border-color:var(--ora)}
+.bene-icon svg{width:22px;height:22px}
+
+.bene-text h4{
+  font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;
+  color:var(--wht);margin-bottom:5px;
+}
+.bene-text p{font-size:14px;color:#666;line-height:1.6}
+
+/* sticky photo */
+.bene-photo{position:sticky;top:108px}
+.bene-photo img{width:100%;height:500px;object-fit:cover;display:block;filter:grayscale(15%) contrast(1.05)}
+.bene-photo::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,10,10,.6) 0%,transparent 50%);
+  pointer-events:none;
+}
+.bene-photo{position:relative}
+.bene-photo-cap{
+  position:absolute;bottom:24px;left:24px;right:24px;
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;
+  letter-spacing:1px;color:rgba(255,255,255,.5);text-transform:uppercase;
+}
+
+/* ─────────────────────────────────────────
+   SEC 5 — COMO FUNCIONA  (light, steps)
+───────────────────────────────────────── */
+.steps{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:3px;margin-top:56px;
+}
+.step{
+  background:var(--wht);padding:40px 30px;position:relative;
+  border-bottom:3px solid transparent;
+  transition:border-bottom-color .3s,transform .3s;
+}
+.step:hover{border-bottom-color:var(--ora);transform:translateY(-3px)}
+.step-n{
+  font-family:'Teko',sans-serif;font-size:72px;font-style:italic;
+  color:rgba(232,92,0,.07);position:absolute;top:10px;right:14px;line-height:1;
+}
+.step-tag{
+  display:block;font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--ora);margin-bottom:10px;position:relative;z-index:1;
+}
+.step h3{
+  font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;
+  color:var(--txt);margin-bottom:10px;position:relative;z-index:1;
+}
+.step p{font-size:14px;color:var(--txt3);line-height:1.6;position:relative;z-index:1}
+
+/* ─────────────────────────────────────────
+   SEC 6 — PREÇO / TRANSPARÊNCIA  (dark, photo + text)
+───────────────────────────────────────── */
+.price-box{max-width:680px;margin:0 auto;
+  background:var(--blk3);border:1px solid #222;
+  border-left:4px solid var(--ora);
+  padding:48px 44px;
+}
+.price-box-title{
+  font-family:'Teko',sans-serif;font-size:26px;font-style:italic;
+  color:var(--ora);letter-spacing:1px;text-transform:uppercase;margin-bottom:28px;
+}
+.price-items{display:flex;flex-direction:column;gap:2px}
+.price-item{
+  display:flex;align-items:flex-start;gap:16px;
+  background:rgba(255,255,255,.025);padding:18px 20px;
+  transition:background .2s;
+}
+.price-item:hover{background:rgba(232,92,0,.06)}
+.price-icon{
+  width:36px;height:36px;flex-shrink:0;
+  background:var(--ora);
+  display:flex;align-items:center;justify-content:center;
+}
+.price-icon svg{width:16px;height:16px}
+.price-item-text h4{
+  font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;
+  color:var(--wht);margin-bottom:3px;
+}
+.price-item-text p{font-size:13px;color:#555;line-height:1.5}
+
+.price-note{
+  margin-top:24px;padding:18px 20px;
+  background:rgba(232,92,0,.06);border-left:3px solid var(--ora);
+  font-size:14px;color:#888;line-height:1.6;
+}
+.price-note strong{color:#ccc}
+
+/* ─────────────────────────────────────────
+   SEC 7 — DIFERENCIAIS  (light)
+───────────────────────────────────────── */
+.diff-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:3px;margin-top:56px;
+}
+.diff-card{
+  background:var(--wht);padding:36px 30px;
+  border-bottom:3px solid transparent;
+  transition:border-color .3s;
+}
+.diff-card:hover{border-bottom-color:var(--ora)}
+.diff-card-icon{
+  width:44px;height:44px;
+  background:var(--cream2);border:1px solid #ddd;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;
+  transition:background .3s,border-color .3s;
+}
+.diff-card:hover .diff-card-icon{background:rgba(232,92,0,.1);border-color:var(--ora)}
+.diff-card-icon svg{width:20px;height:20px}
+.diff-card h3{
+  font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;
+  color:var(--txt);margin-bottom:8px;
+}
+.diff-card p{font-size:14px;color:var(--txt3);line-height:1.6}
+
+/* ─────────────────────────────────────────
+   SEC 8 — QUEM SOMOS  (dark, text + numbers)
+───────────────────────────────────────── */
+.qs-numbers{justify-items:center;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:2px;margin-top:56px;
+}
+.qs-num{
+  background:var(--blk3);padding:36px 28px;text-align:center;
+  border-bottom:3px solid transparent;transition:border-color .3s;
+}
+.qs-num:hover{border-bottom-color:var(--ora)}
+.qs-num .n{
+  font-family:'Teko',sans-serif;font-size:60px;font-style:italic;
+  color:var(--ora);line-height:1;margin-bottom:4px;
+}
+.qs-num .l{
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;
+  color:var(--wht);letter-spacing:1px;text-transform:uppercase;
+}
+.qs-num .d{font-size:12px;color:#444;margin-top:4px;line-height:1.4}
+
+.qs-text-col{font-size:16px;color:#888;line-height:1.8;text-align:center;max-width:680px;margin:0 auto 40px}
+.qs-text-col p{margin-bottom:18px}
+.qs-text-col p:last-child{margin-bottom:0}
+.qs-text-col strong{color:var(--wht)}
+
+/* ─────────────────────────────────────────
+   CTA FINAL  (black)
+───────────────────────────────────────── */
+#cta{
+  background:var(--blk);padding:120px 24px;
+  text-align:center;position:relative;overflow:hidden;
+}
+#cta::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(232,92,0,.07) 0%,transparent 70%);
+}
+.cta-h{text-align:center;
+  font-family:'Teko',sans-serif;
+  font-size:clamp(44px,8vw,100px);font-weight:700;font-style:italic;
+  line-height:.92;color:var(--wht);max-width:840px;margin:0 auto 24px;
+}
+.cta-h .o{color:var(--ora)}
+.cta-sub{font-size:17px;color:#666;max-width:500px;margin:0 auto 48px;line-height:1.6}
+.cta-btn{display:block;text-align:center;margin:0 auto;
+  background:var(--ora);color:#fff;
+  font-family:'Teko',sans-serif;font-size:24px;font-style:italic;
+  letter-spacing:3px;text-transform:uppercase;
+  padding:22px 68px;text-decoration:none;display:inline-block;
+  transition:all .2s;animation:pulse 2.5s infinite;
+}
+.cta-btn:hover{background:var(--ora2);transform:translateY(-3px) scale(1.02)}
+.cta-note{font-size:12px;color:#2e2e2e;margin-top:18px;letter-spacing:1px}
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+footer{
+  background:#060606;padding:26px 40px;
+  display:flex;justify-content:space-between;align-items:center;
+  border-top:1px solid #111;flex-wrap:wrap;gap:14px;
+}
+.foot-txt{font-size:11px;color:#252525;letter-spacing:1px}
+
+/* ─────────────────────────────────────────
+   IMAGE STRIP
+───────────────────────────────────────── */
+.img-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:3px;
+  height:240px;overflow:hidden;
+}
+@media(max-width:700px){.img-strip{grid-template-columns:repeat(2,1fr);height:320px}}
+.img-strip-item{overflow:hidden;position:relative}
+.img-strip-item img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .6s ease;filter:grayscale(20%) contrast(1.05);
+}
+.img-strip-item:hover img{transform:scale(1.06)}
+.img-strip-item::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,transparent 40%,rgba(10,10,10,.5));
+  pointer-events:none;
+}
+
+/* ─────────────────────────────────────────
+   BANNER IMAGE
+───────────────────────────────────────── */
+.banner-img{position:relative;height:360px;overflow:hidden}
+@media(max-width:700px){.banner-img{height:260px}}
+.banner-img img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  filter:grayscale(30%) brightness(.45);
+}
+.banner-overlay{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  padding:40px 24px;text-align:center;
+}
+.banner-quote{
+  font-family:'Teko',sans-serif;
+  font-size:clamp(26px,4.5vw,52px);font-style:italic;font-weight:700;
+  color:#fff;line-height:1.15;max-width:820px;
+}
+.banner-quote span{color:var(--ora)}
+.faq-list{display:flex;flex-direction:column;max-width:780px}
+.faq-item{border-bottom:1px solid #ddd}
+.faq-q{
+  width:100%;background:none;border:none;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;gap:20px;
+  padding:24px 0;text-align:left;
+  font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;
+  color:var(--txt);letter-spacing:.3px;
+  transition:color .2s;
+}
+.faq-q:hover{color:var(--ora)}
+.faq-q.open{color:var(--ora)}
+.faq-arrow{
+  width:20px;height:20px;flex-shrink:0;color:var(--ora);
+  transition:transform .3s ease;
+}
+.faq-q.open .faq-arrow{transform:rotate(180deg)}
+.faq-a{
+  max-height:0;overflow:hidden;
+  transition:max-height .4s ease, padding .3s ease;
+}
+.faq-a.open{max-height:300px;padding-bottom:22px}
+.faq-a p{font-size:15px;color:var(--txt2);line-height:1.7}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+/* ═══════════════════════════════════════════
+   MOBILE FIRST — otimizado para 100% mobile
+═══════════════════════════════════════════ */
+@media(max-width:600px){
+
+  /* Nav */
+  nav{padding:12px 16px}
+  .nav-cta{padding:9px 16px;font-size:12px;letter-spacing:1px}
+
+  /* Hero */
+  #hero{padding:110px 20px 60px;text-align:center;align-items:center}
+  .hero-eyebrow{text-align:center;font-size:10px;letter-spacing:3px;margin-bottom:14px}
+  .hero-h-pre{font-size:clamp(18px,5.5vw,26px)}
+  .hero-h-main{font-size:clamp(38px,11vw,52px)}
+  .hero-sub{font-size:14px;margin:18px 0 0;text-align:center;max-width:100%}
+  .hero-btns{flex-direction:column;gap:10px;margin-top:32px;align-items:stretch}
+  .btn-primary,.btn-ghost{text-align:center;padding:16px 24px;font-size:14px}
+  .hero-stats{
+    gap:0;margin-top:48px;
+    display:grid;grid-template-columns:1fr 1fr 1fr;
+    width:100%;
+  }
+  .hdiv{display:none}
+  .hstat{text-align:center;padding:16px 8px;background:var(--blk2)}
+  .hstat .n{font-size:28px}
+  .hstat .l{font-size:9px;letter-spacing:1px}
+
+  /* Sections padding */
+  .sec{padding:64px 20px}
+
+  /* Section typography */
+  .sec-h{text-align:center;font-size:clamp(32px,9vw,48px);margin-bottom:16px}
+  .sec-sub{font-size:15px;margin-bottom:36px}
+  .sec-tag{text-align:center;display:block;font-size:10px;letter-spacing:3px}
+
+  /* Two col → single col */
+  .two-col{grid-template-columns:1fr;gap:32px}
+
+  /* Photo frames */
+  .photo-frame img{height:260px}
+  .photo-badge{bottom:16px;left:16px;padding:10px 14px}
+  .photo-badge .pb-n{font-size:28px}
+  .photo-badge .pb-l{font-size:9px}
+
+  /* Stat pills */
+  .stat-pills{margin-top:28px}
+  .stat-pill{justify-content:center;text-align:center;flex-direction:column;align-items:center;padding:14px 16px;flex-wrap:wrap;gap:6px}
+  .stat-pill-label{font-size:12px;width:100%}
+  .stat-pill-val{font-size:22px}
+
+  /* Cards */
+  .cards-3{gap:2px}
+  .card-light{padding:28px 22px}
+  .card-big-n{font-size:44px}
+  .card-light h3{font-size:16px}
+
+  /* Compare */
+  .compare{grid-template-columns:1fr;gap:2px}
+  .cmp{padding:28px 22px}
+  .cmp h3{font-size:22px}
+  .cmp-list li{font-size:13px}
+
+  /* Benefits */
+  .bene-layout{grid-template-columns:1fr;gap:0}
+  .bene-photo{display:none} /* hide sticky photo on mobile, not useful */
+  .bene-item{padding:22px 0;gap:14px}
+  .bene-icon{width:40px;height:40px;flex-shrink:0}
+  .bene-text h4{font-size:15px}
+  .bene-text p{font-size:13px}
+
+  /* Steps */
+  .steps{gap:2px}
+  .step{padding:28px 22px}
+  .step h3{font-size:16px}
+  .step p{font-size:13px}
+  .step-n{font-size:52px}
+
+  /* Price box */
+  .price-box{max-width:680px;margin:0 auto;padding:24px 18px}
+  .price-item{padding:14px 14px;gap:12px}
+  .price-icon{width:30px;height:30px;flex-shrink:0}
+  .price-item-text h4{font-size:14px}
+  .price-item-text p{font-size:12px}
+  .price-note{font-size:13px;padding:14px 16px}
+
+  /* Diff cards */
+  .diff-grid{gap:2px}
+  .diff-card{padding:26px 22px}
+  .diff-card h3{font-size:16px}
+  .diff-card p{font-size:13px}
+
+  /* Quem somos */
+  .qs-numbers{justify-items:center;grid-template-columns:1fr 1fr;gap:2px}
+  .qs-num{padding:24px 16px}
+  .qs-num .n{font-size:44px}
+  .qs-num .l{font-size:11px}
+  .qs-text-col{font-size:14px}
+  .qs-text-col p{margin-bottom:14px}
+
+  /* Image strip */
+  .img-strip{grid-template-columns:repeat(2,1fr);height:200px;gap:2px}
+
+  /* Banner */
+  .banner-img{height:220px}
+  .banner-quote{font-size:clamp(20px,6vw,28px)}
+
+  /* FAQ */
+  .faq-q{font-size:15px;padding:18px 0}
+  .faq-a p{font-size:13px}
+
+  /* CTA */
+  #cta{padding:80px 20px}
+  .cta-h{text-align:center;font-size:clamp(36px,10vw,52px)}
+  .cta-sub{font-size:15px;margin-bottom:32px}
+  .cta-btn{display:block;text-align:center;margin:0 auto;padding:18px 36px;font-size:18px;display:block;text-align:center}
+  .cta-note{font-size:11px}
+
+  /* Footer */
+  footer{padding:20px 16px;flex-direction:column;align-items:flex-start;gap:10px}
+
+  /* Ticker */
+  .ticker-item{font-size:10px;padding:0 24px}
+}
+/* Tablet 601–820px */
+@media(min-width:601px) and (max-width:820px){
+  #hero{padding:120px 32px 72px}
+  .hero-h-pre{font-size:clamp(22px,4vw,36px)}
+  .hero-h-main{font-size:clamp(44px,8vw,72px)}
+  .sec{padding:80px 32px}
+  .two-col{grid-template-columns:1fr;gap:40px}
+  .bene-layout{grid-template-columns:1fr;gap:40px}
+  .bene-photo{display:none}
+  .qs-numbers{justify-items:center;grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav>
+  <!-- Logo matching uploaded brand exactly -->
+  <a href="#hero" style="text-decoration:none">
+    <svg viewBox="0 0 220 62" height="42" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Orange-to-red gradient for M (top-bright, bottom-dark like original) -->
+        <linearGradient id="mg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#FF8C00"/>
+          <stop offset="50%"  stop-color="#E85C00"/>
+          <stop offset="100%" stop-color="#B82200"/>
+        </linearGradient>
+        <!-- Side bevel gradient for M (left lighter, right darker) -->
+        <linearGradient id="mg-side" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#FF9A30"/>
+          <stop offset="100%" stop-color="#9A2000"/>
+        </linearGradient>
+        <!-- White drop shadow filter for RP -->
+        <filter id="rp-shadow" x="-8%" y="-8%" width="130%" height="130%">
+          <feDropShadow dx="2" dy="3" stdDeviation="2.5" flood-color="#000" flood-opacity="0.55"/>
+        </filter>
+        <!-- Shadow filter for M -->
+        <filter id="m-shadow" x="-8%" y="-8%" width="130%" height="130%">
+          <feDropShadow dx="2" dy="3" stdDeviation="2" flood-color="#000" flood-opacity="0.5"/>
+        </filter>
+      </defs>
+
+      <!-- Speed line 1: orange, thicker -->
+      <line x1="5"  y1="8" x2="18" y2="56" stroke="#E85C00" stroke-width="3.2" stroke-linecap="round"/>
+      <!-- Speed line 2: white, thin -->
+      <line x1="13" y1="8" x2="26" y2="56" stroke="#ffffff" stroke-width="2"   stroke-linecap="round" opacity="0.28"/>
+
+      <!-- RP: white, bold, italic, with drop shadow to give 3D weight -->
+      <text x="24" y="54"
+        font-family="'Barlow Condensed','Teko',sans-serif"
+        font-size="58" font-weight="900"
+        font-style="italic"
+        letter-spacing="-2"
+        fill="#ffffff"
+        filter="url(#rp-shadow)">RP</text>
+
+      <!-- M: orange gradient with shadow -->
+      <text x="126" y="54"
+        font-family="'Barlow Condensed','Teko',sans-serif"
+        font-size="58" font-weight="900"
+        font-style="italic"
+        letter-spacing="-2"
+        fill="url(#mg)"
+        filter="url(#m-shadow)">M</text>
+    </svg>
+  </a>
+  <a href="#cta" class="nav-cta">Falar com a RPM</a>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section id="hero">
+  <p class="hero-eyebrow">Venda e Pós-Venda para Oficinas Mecânicas</p>
+  <h1 class="hero-h">
+    <span class="hero-h-pre">Marketing atrai cliente.</span><br>
+    <span class="hero-h-main">Pós-venda faz ele<br>sempre voltar.</span>
+  </h1>
+  <p class="hero-sub">
+    Enquanto você busca novos clientes todo mês, <strong>dezenas de clientes antigos estão indo para a concorrência</strong> — só porque ninguém voltou a falar com eles.
+  </p>
+  <div class="hero-btns">
+    <a href="#cta" class="btn-primary">Quero recuperar meus clientes</a>
+    <a href="#problema" class="btn-ghost">Ver os dados</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hstat">
+      <div class="n">7<span>x</span></div>
+      <div class="l">mais caro captar<br>do que fidelizar</div>
+    </div>
+    <div class="hdiv"></div>
+    <div class="hstat">
+      <div class="n">68<span>%</span></div>
+      <div class="l">dos clientes somem<br>por falta de contato</div>
+    </div>
+    <div class="hdiv"></div>
+    <div class="hstat">
+      <div class="n"><span>R$</span>0</div>
+      <div class="l">investido em pós-venda<br>pela maioria das oficinas</div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <span class="ticker-item">Mais clientes voltando <span class="ticker-dot">•</span></span>
+    <span class="ticker-item">Mais avaliações no Google <span class="ticker-dot">•</span></span>
+    <span class="ticker-item">Mais receita sem investimento extra <span class="ticker-dot">•</span></span>
+    <span class="ticker-item">Clientes fiéis que indicam <span class="ticker-dot">•</span></span>
+    <span class="ticker-item">Diferenciação real no mercado <span class="ticker-dot">•</span></span>
+    <span class="ticker-item">Mais clientes voltando <span class="ticker-dot">•</span></span>
+    <span class="ticker-item">Mais avaliações no Google <span class="ticker-dot">•</span></span>
+    <span class="ticker-item">Mais receita sem investimento extra <span class="ticker-dot">•</span></span>
+    <span class="ticker-item">Clientes fiéis que indicam <span class="ticker-dot">•</span></span>
+    <span class="ticker-item">Diferenciação real no mercado <span class="ticker-dot">•</span></span>
+  </div>
+</div>
+
+<!-- ═══════════ SEC 2 — PROBLEMA (dark + photo) ═══════════ -->
+<section id="problema" class="sec sec-dark">
+  <div class="container">
+        <span class="sec-tag reveal">A verdade que ninguém te conta</span>
+        <h2 class="sec-h reveal">
+          Você não está<br>
+          perdendo clientes.<br>
+          <span class="o">Você está<br>descartando.</span>
+        </h2>
+        <p class="sec-sub sec-dark reveal" style="margin-bottom:36px">
+          Todo dono de oficina investe em Instagram, tráfego pago, Google Meu Negócio. Mas existe um buraco enorme na base — e é por ali que o dinheiro escorre todo mês, silenciosamente.
+        </p>
+
+        <div class="stat-pills reveal">
+          <div class="stat-pill">
+            <span class="stat-pill-label">Captar um cliente novo vs. reconquistar um antigo</span>
+            <span class="stat-pill-val"><span>7×</span> mais caro</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-pill-label">Clientes satisfeitos que voltariam se contatados</span>
+            <span class="stat-pill-val"><span>80</span>%</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-pill-label">Avaliações a mais com solicitação ativa</span>
+            <span class="stat-pill-val"><span>3×</span> mais</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-pill-label">Oficinas com pós-venda estruturado no Brasil</span>
+            <span class="stat-pill-val">menos de <span>5</span>%</span>
+          </div>
+        </div>
+      </div>
+  </section>
+
+<!-- ═══════════ SEC 3 — SOLUÇÃO (light + cards + compare) ═══════════ -->
+<section id="solucao" class="sec sec-light accent-top">
+  <div class="container">
+    <span class="sec-tag reveal">O outro cenário</span>
+    <h2 class="sec-h reveal">
+      E se cada cliente<br>
+      que saiu voltasse<br>
+      <span class="o">por conta própria?</span>
+    </h2>
+    <p class="sec-sub reveal">
+      Oficinas com pós-venda ativo constroem algo que tráfego pago nunca vai comprar: uma base de clientes fiéis que volta, recomenda e deixa avaliação.
+    </p>
+
+    <div class="cards-3">
+      <div class="card-light reveal">
+        <div class="card-big-n">+30%</div>
+        <h3>Receita recorrente sem anúncio</h3>
+        <p>Clientes que recebem contato pós-serviço têm 30% mais chance de agendar nova visita nos próximos 90 dias — sem você gastar um centavo a mais.</p>
+      </div>
+      <div class="card-light reveal">
+        <div class="card-big-n">4.9★</div>
+        <h3>Avaliações que vendem por você</h3>
+        <p>Uma nota alta no Google é o melhor vendedor que sua oficina pode ter. Com solicitação ativa, a taxa de avaliação sobe drasticamente.</p>
+      </div>
+      <div class="card-light reveal">
+        <div class="card-big-n">100%</div>
+        <h3>Histórico de cada cliente</h3>
+        <p>Saiba o que cada cliente fez, quando foi a última visita e qual a próxima oportunidade de oferta — tudo organizado e acessível.</p>
+      </div>
+    </div>
+
+    <div class="compare reveal" style="margin-top:48px">
+      <div class="cmp before">
+        <span class="cmp-tag">Sem pós-venda</span>
+        <h3>A oficina invisível</h3>
+        <ul class="cmp-list">
+          <li>Cliente atende, paga e some</li>
+          <li>Você não sabe quem voltou ou não</li>
+          <li>Nenhuma avaliação nova no Google</li>
+          <li>Depende 100% de novos clientes todo mês</li>
+          <li>O concorrente aparece antes na próxima revisão</li>
+          <li>Ticket médio estagnado</li>
+          <li>Nenhuma diferenciação percebida</li>
+        </ul>
+      </div>
+      <div class="cmp after">
+        <span class="cmp-tag">Com a RPM</span>
+        <h3>A oficina que não esquece</h3>
+        <ul class="cmp-list">
+          <li>Cliente recebe contato personalizado pós-serviço</li>
+          <li>Histórico completo e organizado de cada cliente</li>
+          <li>Avaliações chegando toda semana no Google</li>
+          <li>Base ativa que volta sem investimento em anúncio</li>
+          <li>Você fala primeiro — sempre</li>
+          <li>Ofertas estratégicas que aumentam o ticket</li>
+          <li>Profissionalismo e diferenciação real</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SEC 4 — BENEFÍCIOS (dark + icons + photo) ═══════════ -->
+<section id="beneficios" class="sec sec-dark">
+  <div class="container">
+    <span class="sec-tag reveal">O que muda de verdade</span>
+    <h2 class="sec-h reveal">
+      Não é só mais clientes.<br>
+      É outra <span class="o">realidade.</span>
+    </h2>
+    <p class="sec-sub reveal">
+      Cada mensagem enviada para um cliente é uma oportunidade de receita que você não precisa pagar para gerar.
+    </p>
+
+    <div class="bene-layout">
+      <div class="bene-list">
+
+        <div class="bene-item reveal">
+          <div class="bene-icon">
+            <!-- WhatsApp / message icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--ora)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div class="bene-text">
+            <h4>Mensagens personalizadas para cada cliente</h4>
+            <p>Cada cliente recebe uma ficha com os serviços realizados, foto do antes e depois e uma mensagem com a identidade da sua oficina. Sem você precisar fazer nada.</p>
+          </div>
+        </div>
+
+        <div class="bene-item reveal">
+          <div class="bene-icon">
+            <!-- Star / google review icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--ora)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <div class="bene-text">
+            <h4>Avaliações no Google sem precisar pedir</h4>
+            <p>O sistema identifica o cliente satisfeito e envia um convite direto para avaliar sua oficina no Google — com desconto como incentivo. Mais avaliações, melhor ranqueamento.</p>
+          </div>
+        </div>
+
+        <div class="bene-item reveal">
+          <div class="bene-icon">
+            <!-- Target / offer icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--ora)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <circle cx="12" cy="12" r="6"/>
+              <circle cx="12" cy="12" r="2"/>
+            </svg>
+          </div>
+          <div class="bene-text">
+            <h4>Oferta certa, no momento certo, para a pessoa certa</h4>
+            <p>Quem fez troca de óleo recebe oferta de revisão 90 dias depois. Quem fez funilaria recebe desconto em polimento. Contexto gera resultado.</p>
+          </div>
+        </div>
+
+        <div class="bene-item reveal">
+          <div class="bene-icon">
+            <!-- Bar chart / report icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--ora)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6"  y1="20" x2="6"  y2="14"/>
+              <line x1="2"  y1="20" x2="22" y2="20"/>
+            </svg>
+          </div>
+          <div class="bene-text">
+            <h4>Relatório trimestral com tudo que importa</h4>
+            <p>Clientes que voltaram, avaliações recebidas, oportunidades identificadas. Dados reais para decisões reais.</p>
+          </div>
+        </div>
+
+        <div class="bene-item reveal">
+          <div class="bene-icon">
+            <!-- Trophy / differentiation icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--ora)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="8 21 12 17 16 21"/>
+              <line x1="12" y1="17" x2="12" y2="11"/>
+              <path d="M7 4H4a2 2 0 0 0 0 4c0 2.21 1.79 4 4 4"/>
+              <path d="M17 4h3a2 2 0 0 1 0 4c0 2.21-1.79 4-4 4"/>
+              <rect x="7" y="2" width="10" height="9" rx="2"/>
+            </svg>
+          </div>
+          <div class="bene-text">
+            <h4>Diferenciação que o cliente sente</h4>
+            <p>Quando seu concorrente não faz nada e você aparece com a ficha técnica, foto do carro e um desconto personalizado — a diferença é gritante. Isso é posicionamento.</p>
+          </div>
+        </div>
+
+        <div class="bene-item reveal">
+          <div class="bene-icon">
+            <!-- Shield / no hassle icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--ora)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div class="bene-text">
+            <h4>Você não muda nada na sua rotina</h4>
+            <p>Sua única tarefa é atender bem. O envio de mensagens, follow-up, pedido de avaliação e oferta — cuidamos de tudo. Você trabalha, a gente faz o pós-venda.</p>
+          </div>
+        </div>
+
+  </div>
+</section>
+
+<!-- ═══════════ SEC 5 — COMO FUNCIONA (light + steps) ═══════════ -->
+<section id="como-funciona" class="sec sec-light2 accent-top">
+  <div class="container">
+    <span class="sec-tag reveal">O método RPM</span>
+    <h2 class="sec-h reveal">
+      Simples de implementar.<br>
+      <span class="o">Impossível de ignorar.</span>
+    </h2>
+    <p class="sec-sub reveal">
+      Você não precisa entender de tecnologia, contratar equipe ou mudar sua operação. Em poucos dias, tudo está funcionando.
+    </p>
+
+    <div class="steps">
+      <div class="step reveal">
+        <span class="step-n">01</span>
+        <span class="step-tag">Ativação</span>
+        <h3>Montamos tudo com você</h3>
+        <p>Configuramos o sistema com a identidade da sua oficina: número de WhatsApp, mensagens personalizadas e catálogo de serviços. Em poucos dias, tudo no ar.</p>
+      </div>
+      <div class="step reveal">
+        <span class="step-n">02</span>
+        <span class="step-tag">Registro</span>
+        <h3>Você atende. Nós cuidamos do resto.</h3>
+        <p>Após cada serviço, você registra o cliente e envia a foto do antes e depois. A partir daí assumimos: ficha técnica, pedido de avaliação, oferta personalizada.</p>
+      </div>
+      <div class="step reveal">
+        <span class="step-n">03</span>
+        <span class="step-tag">Relacionamento</span>
+        <h3>O cliente recebe. E lembra de você.</h3>
+        <p>Uma sequência estratégica de mensagens mantém sua oficina presente na memória do cliente — avaliação, catálogo, oferta. No momento certo, pelo canal certo.</p>
+      </div>
+      <div class="step reveal">
+        <span class="step-n">04</span>
+        <span class="step-tag">Resultado</span>
+        <h3>Retorno, avaliação e receita.</h3>
+        <p>Clientes voltando, avaliações chegando, ticket subindo. Tudo monitorado e entregue em relatório trimestral para você ver o impacto real no caixa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SEC 6 — INVESTIMENTO (dark + photo + price box) ═══════════ -->
+<section id="investimento" class="sec sec-dark">
+  <div class="container">
+    <span class="sec-tag reveal">Transparência total</span>
+        <h2 class="sec-h reveal">
+          Um valor mensal.<br>
+          <span class="o">Nós cuidamos<br>de todo o resto.</span>
+        </h2>
+        <p class="sec-sub sec-dark reveal" style="margin-bottom:40px">
+          Sem anúncios, sem investimento posterior, sem taxa de adesão. Você paga apenas um valor mensal e nós cuidamos de tudo — desde a configuração até o envio de cada mensagem.
+        </p>
+
+        <div class="price-box reveal">
+          <p class="price-box-title">O que está incluído</p>
+          <div class="price-items">
+            <div class="price-item">
+              <div class="price-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+              </div>
+              <div class="price-item-text">
+                <h4>Mensagem para todos os seus clientes</h4>
+                <p>Todos os clientes atendidos recebem contato pós-serviço. Não importa o volume.</p>
+              </div>
+            </div>
+            <div class="price-item">
+              <div class="price-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+              <div class="price-item-text">
+                <h4>Gestão de avaliações no Google</h4>
+                <p>Identificamos os clientes satisfeitos e os convidamos a avaliar sua oficina.</p>
+              </div>
+            </div>
+            <div class="price-item">
+              <div class="price-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+                  <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+              </div>
+              <div class="price-item-text">
+                <h4>CRM e controle de clientes</h4>
+                <p>Histórico completo de cada cliente, organizado e sempre disponível.</p>
+              </div>
+            </div>
+            <div class="price-item">
+              <div class="price-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+                  <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
+                </svg>
+              </div>
+              <div class="price-item-text">
+                <h4>Relatório trimestral de resultados</h4>
+                <p>Dados claros sobre retorno de clientes, avaliações e oportunidades.</p>
+              </div>
+            </div>
+          </div>
+          <div class="price-note">
+            <strong>Valor mensal fixo, sem custos extras.</strong> O investimento pode variar de acordo com o volume de clientes da sua oficina. Fale com a gente para receber uma proposta personalizada.
+          </div>
+        </div>
+  </div>
+</section>
+
+<!-- ═══════════ SEC 7 — DIFERENCIAIS (light + icon cards) ═══════════ -->
+<section id="diferenciais" class="sec sec-light accent-top">
+  <div class="container">
+    <span class="sec-tag reveal">Por que a RPM?</span>
+    <h2 class="sec-h reveal">
+      Especialistas em oficinas.<br>
+      <span class="o">Não em todo mundo.</span>
+    </h2>
+    <p class="sec-sub reveal">
+      Pós-venda estruturado ainda é raro no setor automotivo. Quem implementar primeiro sai na frente — e é difícil de alcançar.
+    </p>
+
+    <div class="diff-grid">
+      <div class="diff-card reveal">
+        <div class="diff-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--ora)" stroke-width="2" stroke-linecap="round">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+        </div>
+        <h3>Feito para o universo automotivo</h3>
+        <p>Não é um sistema genérico adaptado. É uma metodologia construída para a realidade de oficinas mecânicas, estéticas e centros de serviço.</p>
+      </div>
+
+      <div class="diff-card reveal">
+        <div class="diff-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--ora)" stroke-width="2" stroke-linecap="round">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <h3>Um valor mensal. Sem surpresas.</h3>
+        <p>Sem taxa de adesão, sem cobranças extras por volume. Você sabe exatamente quanto paga todo mês — e o que recebe em troca.</p>
+      </div>
+
+      <div class="diff-card reveal">
+        <div class="diff-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--ora)" stroke-width="2" stroke-linecap="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <h3>Você não muda nada na operação</h3>
+        <p>Sem curva de aprendizado, sem nova equipe. Você continua atendendo. Nós cuidamos do relacionamento pós-serviço com cada cliente.</p>
+      </div>
+
+      <div class="diff-card reveal">
+        <div class="diff-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--ora)" stroke-width="2" stroke-linecap="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
+        <h3>Resultado visível desde o primeiro mês</h3>
+        <p>Avaliações chegando, clientes respondendo, histórico se formando. Você sente a diferença antes do fim do primeiro mês.</p>
+      </div>
+
+      <div class="diff-card reveal">
+        <div class="diff-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--ora)" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <h3>Você fala com o cliente antes do concorrente</h3>
+        <p>Com follow-up estratégico, sua oficina aparece no momento em que o cliente está prestes a precisar de serviço. Timing é tudo.</p>
+      </div>
+
+      <div class="diff-card reveal">
+        <div class="diff-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--ora)" stroke-width="2" stroke-linecap="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <h3>Vantagem competitiva duradoura</h3>
+        <p>Enquanto 95% das oficinas não fazem pós-venda, você constrói uma base ativa e fiel. Uma vantagem que cresce a cada mês.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SEC 8 — QUEM SOMOS (dark + numbers) ═══════════ -->
+<section id="quem-somos" class="sec sec-dark">
+  <div class="container">
+    <span class="sec-tag reveal">Quem está por trás</span>
+        <h2 class="sec-h reveal">
+          Marketing e tecnologia<br>
+          <span class="o">focados em<br>resultado real.</span>
+        </h2>
+        <div class="qs-text-col reveal">
+          <p>A RPM nasceu da observação de um problema real: <strong>oficinas excelentes perdendo clientes todos os dias</strong> não por falta de qualidade — mas por falta de continuidade no relacionamento.</p>
+          <p>Somos dois profissionais com <strong>mais de 5 anos de experiência em marketing digital e vendas</strong>, com mais de 50 clientes atendidos em diferentes segmentos. Unimos esse conhecimento para criar uma solução focada 100% no setor automotivo.</p>
+          <p>Nossa missão: <strong>garantir que o seu cliente lembre de você antes de lembrar do concorrente.</strong></p>
+    <div class="qs-numbers reveal">
+        <div class="qs-num">
+          <div class="n">5+</div>
+          <div class="l">Anos de experiência</div>
+          <div class="d">Em marketing digital e vendas</div>
+        </div>
+        <div class="qs-num">
+          <div class="n">50+</div>
+          <div class="l">Clientes atendidos</div>
+          <div class="d">Em projetos de marketing e vendas</div>
+        </div>
+        <div class="qs-num">
+          <div class="n">R$0</div>
+          <div class="l">Taxa de adesão</div>
+          <div class="d">Sem custo para começar</div>
+        </div>
+        <div class="qs-num">
+          <div class="n">1x</div>
+          <div class="l">Mensalidade fixa</div>
+          <div class="d">Sem surpresas, sem cobranças extras</div>
+        </div>
+  </div>
+</section>
+
+<!-- ═══════════ SEC FAQ (light) ═══════════ -->
+<section class="sec sec-light accent-top">
+  <div class="container">
+    <span class="sec-tag reveal">Dúvidas frequentes</span>
+    <h2 class="sec-h reveal">
+      Perguntas que todo<br>
+      dono de oficina <span class="o">faz.</span>
+    </h2>
+    <p class="sec-sub reveal">
+      Respostas diretas, sem enrolação.
+    </p>
+
+    <div class="faq-list reveal">
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Quanto custa o serviço?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>O valor é uma mensalidade fixa, sem taxa de adesão e sem cobranças extras. O investimento pode variar de acordo com o volume de clientes da sua oficina — por isso fazemos uma conversa antes para entender seu caso e apresentar a proposta certa. Fale com a gente pelo WhatsApp e te passamos os valores em minutos.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Funciona para oficina pequena ou só para grandes?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Funciona para qualquer tamanho. Na verdade, oficinas menores têm ainda mais a ganhar — porque cada cliente que volta representa uma fatia maior da receita total. Seja você uma oficina de bairro ou um centro automotivo maior, o processo se adapta ao seu volume.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Preciso de alguém de TI ou entender de tecnologia?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Não. Configuramos e operamos tudo por você. Seu papel é simples: atender bem e registrar o serviço do cliente. O resto — envio de mensagens, pedido de avaliação, ofertas — fica com a gente. Sem curva de aprendizado, sem sistema complicado.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Em quanto tempo começo a ver resultado?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Os primeiros sinais aparecem logo no primeiro mês — avaliações chegando, clientes respondendo as mensagens. Resultados mais expressivos em retorno de clientes e receita se consolidam entre 60 e 90 dias, dependendo do seu volume de atendimentos.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Meu cliente vai saber que é uma empresa terceirizada fazendo isso?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Não. Tudo é feito com a identidade da sua oficina — nome, logo, linguagem que você usa. Para o cliente, parece que veio diretamente de você. Isso reforça o profissionalismo da sua marca, não da nossa.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" style="border-bottom:none">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Posso cancelar quando quiser?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Sim. Não existe fidelidade forçada. Trabalhamos com contratos mensais renováveis. Acreditamos que se você ficar, é porque está vendo resultado — não porque está preso.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CTA FINAL ═══════════ -->
+<section id="cta">
+  <div class="container" style="position:relative;z-index:1">
+    <p class="sec-tag reveal" style="text-align:center;justify-content:center;display:block">Chegou a hora</p>
+    <h2 class="cta-h reveal">
+      Sua oficina já<br>
+      tem os clientes.<br>
+      <span class="o">Só falta não<br>deixar eles irem.</span>
+    </h2>
+    <p class="cta-sub reveal">
+      Fale com a gente agora. Vamos entender sua operação e mostrar como o pós-venda funciona na prática.
+    </p>
+    <a href="https://wa.me/5500000000000" target="_blank" class="cta-btn reveal">
+      Quero conversar no WhatsApp →
+    </a>
+    <p class="cta-note reveal">Sem compromisso. Sem enrolação. Uma conversa direta.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <svg viewBox="0 0 220 62" height="32" xmlns="http://www.w3.org/2000/svg" opacity="0.4">
+    <defs>
+      <linearGradient id="mgf" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#FF8C00"/>
+        <stop offset="50%"  stop-color="#E85C00"/>
+        <stop offset="100%" stop-color="#B82200"/>
+      </linearGradient>
+    </defs>
+    <line x1="5"  y1="8" x2="18" y2="56" stroke="#E85C00" stroke-width="3.2" stroke-linecap="round"/>
+    <line x1="13" y1="8" x2="26" y2="56" stroke="#ffffff" stroke-width="2"   stroke-linecap="round" opacity="0.28"/>
+    <text x="24" y="54" font-family="'Barlow Condensed',sans-serif" font-size="58" font-weight="900" font-style="italic" letter-spacing="-2" fill="#ffffff">RP</text>
+    <text x="126" y="54" font-family="'Barlow Condensed',sans-serif" font-size="58" font-weight="900" font-style="italic" letter-spacing="-2" fill="url(#mgf)">M</text>
+  </svg>
+  <div class="foot-txt">Venda e Pós-Venda para Oficinas Mecânicas</div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  function toggleFaq(btn) {
+    const answer = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    // close all
+    document.querySelectorAll('.faq-q').forEach(b => {
+      b.classList.remove('open');
+      b.nextElementSibling.classList.remove('open');
+    });
+    // open clicked if it was closed
+    if (!isOpen) {
+      btn.classList.add('open');
+      answer.classList.add('open');
+    }
+  }
+</script>
+</body>
+</html>
